@@ -8,7 +8,7 @@ const TRACKS = [
   { id: "W1nb5DHHlPw", title: "सपना भई आँखामा", artist: "साधना सरगम" },
   { id: "EH9GKk50Oew", title: "मखमली माया दिउँला", artist: "उदित नारायण झा · साधना सरगम" },
   { id: "QKp3oCf_Cgs", title: "तिम्रो आँखाको सागरमा", artist: "प्रकाश श्रेष्ठ · आशा भोसले" },
-  { id: "lR3X9QsmIys", title: "नयाँ नयाँ सजाऊ है संसार", artist: "उदित नारायण · आशा भोसले" },
+  { id: "ZWVh5m2Q3Yo", title: "नयाँ नयाँ सजाऊ है संसार", artist: "उदित नारायण · आशा भोसले" },
   { id: "-7tHsrg1G10", title: "यो पहाड", artist: "उदित नारायण झा · दीपा झा" },
   { id: "cCkqlXFQZzk", title: "सम्झना बिर्सना", artist: "उदित नारायण झा · दीपा झा" },
   { id: "f0WaZEZRxvw", title: "चिठी आएन", artist: "कविता कृष्णमूर्ति" },
@@ -33,7 +33,7 @@ const TRACKS = [
   { id: "Hn-ariNzIF4", title: "तिमीलाई म के भनूँ", artist: "नारायण गोपाल" },
   { id: "x7faDV25Dxs", title: "यति धेरै माया", artist: "नारायण गोपाल" },
   { id: "HC6bgMPacoc", title: "तिम्रो जस्तो मुटु", artist: "नारायण गोपाल" },
-  { id: "G1xQJ0cY5bQ", title: "मखमली पछ्यौरीले", artist: "उदित नारायण झा · सञ्जीवनी" },
+  { id: "SmOhcCnn4xo", title: "मखमली पछ्यौरीले", artist: "उदित नारायण झा · सञ्जीवनी" },
   { id: "2p5jJvX9JqY", title: "त्यो ओठमा", artist: "उदित नारायण झा" },
   { id: "dkQClNMab6A", title: "धड्किन्छौ मुटुमा होला", artist: "नारायण गोपाल" }
 ];
