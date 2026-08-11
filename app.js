@@ -19,7 +19,6 @@
   const VOL_KEY = 'samjhana:vol:v1';
   const RESUME_KEY = 'samjhana:resume:v1';
   let resume = null;
-  let lastHiddenAt = 0;
   let saveTimer = 0;
 
   function init() {
@@ -286,29 +285,11 @@
     } catch (e) {}
   }
 
-  /* ---------------- visibility resume ---------------- */
+  /* ---------------- background playback ---------------- */
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      lastHiddenAt = Date.now();
-      saveResume();
-      if (state.ready) state.player.pauseVideo();
-    } else if (lastHiddenAt && state.ready && (Date.now() - lastHiddenAt) <= 18 * 60 * 1000) {
-      const saved = readResume();
-      if (saved && saved.wasPlaying) {
-        if (saved.id === TRACKS[state.index].id) state.player.playVideo();
-        else {
-          const i = TRACKS.findIndex((t) => t.id === saved.id);
-          if (i !== -1) { state.index = i; updateControls(); updateQueueActive(); state.player.loadVideoById(saved.id, saved.t > 5 ? saved.t : 0); }
-          else state.player.playVideo();
-        }
-      }
-    }
+    if (document.hidden) saveResume();
   });
-
-  function readResume() {
-    try { return JSON.parse(localStorage.getItem(RESUME_KEY) || 'null'); } catch (e) { return null; }
-  }
 
   /* ---------------- horn ---------------- */
 
