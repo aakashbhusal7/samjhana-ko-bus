@@ -56,13 +56,29 @@
     wrap.innerHTML = html;
   }
 
+  function graphemeSplit(str) {
+    try {
+      const seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+      return Array.from(seg.segment(str), (s) => s.segment);
+    } catch (e) {
+      const out = [];
+      let cur = '';
+      for (const ch of str) {
+        if (cur && /[\p{M}\u200C\u200D]/u.test(ch)) cur += ch;
+        else { if (cur) out.push(cur); cur = ch; }
+      }
+      if (cur) out.push(cur);
+      return out;
+    }
+  }
+
   function splitTitle() {
     const h = $('#hero-title');
     const text = h.textContent || 'सम्झनाको बस';
     let html = '', i = 0;
-    for (const ch of text) {
-      const isSpace = ch === ' ';
-      html += '<span style="--fan:' + (i % 2 ? 1 : -1) + ';--d:' + (i * 0.022) + 's">' + (isSpace ? '\u00A0' : ch) + '</span>';
+    for (const g of graphemeSplit(text)) {
+      const isSpace = g === ' ';
+      html += '<span style="--fan:' + (i % 2 ? 1 : -1) + ';--d:' + (i * 0.022) + 's">' + (isSpace ? '\u00A0' : g) + '</span>';
       i++;
     }
     h.innerHTML = html;
