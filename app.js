@@ -39,6 +39,7 @@
     spawnRocks();
     bindUI();
     loadYouTube();
+    startBellSchedule();
   }
 
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -397,6 +398,94 @@
     if (on) state.player.setVolume(Math.max(1, Math.round(state.vol * 0.22)));
     else state.player.setVolume(state.muted ? 0 : state.vol);
   }
+
+  /* ---------------- temple bells ---------------- */
+
+  let bellBus = null;
+  let noiseBuf = null;
+  let bellVisual = 0;
+  let bellTimer = 0;
+
+  function ensureNoise() {
+    if (noiseBuf || !actx) return;
+    const len = Math.floor(actx.sampleRate * 0.3);
+    noiseBuf = actx.createBuffer(1, len, actx.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  }
+
+  function bellStrike(t, amp) {
+    const ctx = actx;
+    const partials = [[1, 1], [2.01, 0.62], [2.91, 0.45], [4.42, 0.24], [6.28, 0.11], [1.49, 0.36]];
+    const base = 640;
+    for (let i = 0; i < partials.length; i++) {
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.value = base * partials[i][0];
+      const g = ctx.createGain();
+      const d = 2.4;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(amp * partials[i][1], t + 0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(g); g.connect(bellBus);
+      o.start(t); o.stop(t + d + 0.05);
+    }
+    ensureNoise();
+    if (noiseBuf) {
+      const n = ctx.createBufferSource();
+      n.buffer = noiseBuf;
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 1900; bp.Q.value = 0.7;
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(amp * 0.45, t);
+      ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+      n.connect(bp); bp.connect(ng); ng.connect(bellBus);
+      n.start(t); n.stop(t + 0.15);
+    }
+  }
+
+  function duckBells(on) {
+    if (!state.ready) return;
+    if (on) state.player.setVolume(Math.max(1, Math.round(state.vol * 0.4)));
+    else state.player.setVolume(state.muted ? 0 : state.vol);
+  }
+
+  function ringBells() {
+    const ctx = getCtx();
+    if (!ctx || ctx.state !== 'running') return;
+    if (!bellBus) { bellBus = ctx.createGain(); bellBus.gain.value = 0.85; bellBus.connect(master); }
+    const t = ctx.currentTime;
+    duckBells(true);
+    bellStrike(t, 0.5);
+    bellStrike(t + 1.0, 0.42);
+    bellStrike(t + 2.0, 0.34);
+    const b = $('#bell');
+    if (b) {
+      clearTimeout(bellVisual);
+      b.classList.remove('ringing');
+      void b.offsetWidth;
+      b.classList.add('ringing');
+      bellVisual = setTimeout(() => b.classList.remove('ringing'), 3100);
+    }
+    setTimeout(() => duckBells(false), 3200);
+  }
+
+  function startBellSchedule() {
+    const interval = 5 * 60 * 1000;
+    const tick = () => {
+      bellTimer = setTimeout(() => { ringBells(); tick(); }, interval - (Date.now() % interval) + 40);
+    };
+    tick();
+  }
+
+  const gestureRing = () => {
+    document.removeEventListener('pointerdown', gestureRing);
+    document.removeEventListener('keydown', gestureRing);
+    const ctx = getCtx();
+    if (ctx && ctx.state === 'running') setTimeout(ringBells, 1200);
+  };
+  document.addEventListener('pointerdown', gestureRing);
+  document.addEventListener('keydown', gestureRing);
 
   /* ---------------- toast ---------------- */
 
