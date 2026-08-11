@@ -1,0 +1,31 @@
+const TRACKS = [
+  { id: "TCB_FEuhbLU", title: "डाली डाली फूल फुल्यो", artist: "साधना सरगम · अनुराधा श्रीवास्तव · श्रवण घिमिरे" },
+  { id: "5rmlwlEf5W8", title: "हाँची राखू जस्तो लाग्छ", artist: "श्रवण घिमिरे · अनुराधा · कुमार सानु" },
+  { id: "vcO9hSwYrnc", title: "पिरतीको मिठो तृष्णा", artist: "भारती घिमिरे · रञ्जित गजमेर" },
+  { id: "nljDaTYDLs0", title: "हाम्रो युगको पनि राम्रो", artist: "इन्द्रजीत मिजार" },
+  { id: "pzcBs8XrvyQ", title: "मोहनी लाग्ला है", artist: "नारायण गोपाल · आशा भोसले" },
+  { id: "iwMBR0o3yfg", title: "लहनाले जुरायोकी", artist: "साधना सरगम" },
+  { id: "W1nb5DHHlPw", title: "सपना भई आँखामा", artist: "साधना सरगम" },
+  { id: "EH9GKk50Oew", title: "मखमली माया दिउँला", artist: "उदित नारायण झा · साधना सरगम" },
+  { id: "QKp3oCf_Cgs", title: "तिम्रो आँखाको सागरमा", artist: "प्रकाश श्रेष्ठ · आशा भोसले" },
+  { id: "lR3X9QsmIys", title: "नयाँ नयाँ सजाऊ है संसार", artist: "उदित नारायण · आशा भोसले" },
+  { id: "-7tHsrg1G10", title: "यो पहाड", artist: "उदित नारायण झा · दीपा झा" },
+  { id: "cCkqlXFQZzk", title: "सम्झना बिर्सना", artist: "उदित नारायण झा · दीपा झा" },
+  { id: "f0WaZEZRxvw", title: "चिठी आएन", artist: "कविता कृष्णमूर्ति" },
+  { id: "c-l4sIXbyG4", title: "माया त माया हो", artist: "नारायण गोपाल · आशा भोसले" },
+  { id: "9LUPIO4UUKM", title: "शुभकामना भरि", artist: "तारा देवी" },
+  { id: "Gc1oDfdsAUI", title: "घुम्तीमा नआउ है", artist: "प्रेम ध्वज प्रधान" },
+  { id: "Bw1IqmDRXQo", title: "फूलको थुङ्गा", artist: "तारा देवी" },
+  { id: "LsmMuZMWkNU", title: "फूलै फूलको मौसम तिमीलाई", artist: "तारा देवी" },
+  { id: "wDO8OYKYP3Q", title: "उकाली ओराली हरूमा", artist: "तारा देवी" },
+  { id: "4xfUFn6mx9g", title: "एउटा मान्छेको मायाले कति", artist: "नारायण गोपाल" },
+  { id: "LFR4eMQzUr4", title: "केही मिठो बात गर", artist: "नारायण गोपाल" },
+  { id: "D0MGB909r8k", title: "कसले चोर्यो मेरो मन", artist: "उदित नारायण झा · साधना सरगम" },
+  { id: "aWcc8_tqhvo", title: "लाजको लाली", artist: "उदित नारायण झा · मल्लिका कार्की" },
+  { id: "_08_5-Iumg8", title: "गान्द्रुकको डाँडै डाँडा", artist: "दीपा झा" },
+  { id: "nzOSlewEO2c", title: "सम्झना बिर्सना (दोस्रो)", artist: "उदित नारायण झा · दीपा झा · शम्भुजीत बास्कोटा" },
+  { id: "gGXuRJ2jsfw", title: "मलाई फुल्न देऊ", artist: "साधना सरगम · सोहम" }
+];
+
+const ROUTE = { name: "पृथ्वी राजमार्ग", from: "पोखरा", to: "काठमाडौं" };
+const SITE = { brand: "सम्झनाको बस", tagline: "साँझको उज्यालो, पहाडको बाटो" };
