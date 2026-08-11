@@ -24,7 +24,18 @@ const TRACKS = [
   { id: "aWcc8_tqhvo", title: "लाजको लाली", artist: "उदित नारायण झा · मल्लिका कार्की" },
   { id: "_08_5-Iumg8", title: "गान्द्रुकको डाँडै डाँडा", artist: "दीपा झा" },
   { id: "nzOSlewEO2c", title: "सम्झना बिर्सना (दोस्रो)", artist: "उदित नारायण झा · दीपा झा · शम्भुजीत बास्कोटा" },
-  { id: "gGXuRJ2jsfw", title: "मलाई फुल्न देऊ", artist: "साधना सरगम · सोहम" }
+  { id: "gGXuRJ2jsfw", title: "मलाई फुल्न देऊ", artist: "साधना सरगम · सोहम" },
+  { id: "4wBLQlwh_xg", title: "मग्लिन पारि तरेर गण्डकी", artist: "उदित नारायण झा · दीपा झा" },
+  { id: "FC9BjozfyyE", title: "झूटो रैछ", artist: "उदित नारायण झा · दीपा झा" },
+  { id: "8YejjLXeagE", title: "म फूल बनी फुली दिन्छु", artist: "सञ्जीवनी · अभिजित सावंत" },
+  { id: "e05mjsulCVg", title: "हेर न हेर कान्छा", artist: "अरुणा लामा · जितेन्द्र बर्देवा" },
+  { id: "ZudXTC4XuS8", title: "तिमी देउ या नदेउ", artist: "नारायण गोपाल · मीरा राणा" },
+  { id: "Hn-ariNzIF4", title: "तिमीलाई म के भनूँ", artist: "नारायण गोपाल" },
+  { id: "x7faDV25Dxs", title: "यति धेरै माया", artist: "नारायण गोपाल" },
+  { id: "HC6bgMPacoc", title: "तिम्रो जस्तो मुटु", artist: "नारायण गोपाल" },
+  { id: "G1xQJ0cY5bQ", title: "मखमली पछ्यौरीले", artist: "उदित नारायण झा · सञ्जीवनी" },
+  { id: "2p5jJvX9JqY", title: "त्यो ओठमा", artist: "उदित नारायण झा" },
+  { id: "dkQClNMab6A", title: "धड्किन्छौ मुटुमा होला", artist: "नारायण गोपाल" }
 ];
 
 const ROUTE = { name: "पृथ्वी राजमार्ग", from: "पोखरा", to: "काठमाडौं" };
