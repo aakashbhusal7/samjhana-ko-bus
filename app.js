@@ -39,8 +39,8 @@
     spawnRocks();
     bindUI();
     loadYouTube();
-    startBellSchedule();
     loadHorn();
+    startWind();
   }
 
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -136,12 +136,13 @@
   function initPlayer() {
     state.player = new YT.Player('yt-player', {
       videoId: TRACKS[state.index].id,
-      playerVars: { controls: 0, disablekb: 1, playsinline: 1, rel: 0, modestbranding: 1, enablejsapi: 1 },
+      playerVars: { controls: 0, disablekb: 1, playsinline: 1, rel: 0, modestbranding: 1, enablejsapi: 1, autoplay: 1 },
       events: {
         onReady: (e) => {
           state.ready = true;
           applyVolume();
-          restoreResume();
+          if (resume) { restoreResume(); }
+          else { state.player.playVideo(); }
         },
         onStateChange: (e) => {
           const d = e.data;
@@ -309,6 +310,38 @@
     if (document.hidden) saveResume();
   });
 
+  /* ---------------- wind ---------------- */
+
+  let windBuf = null;
+  let windSrc = null;
+
+  function loadWind() {
+    fetch('wind.mp3')
+      .then((r) => { if (!r.ok) throw new Error(); return r.arrayBuffer(); })
+      .then((b) => { const ctx = getCtx(); if (ctx) return ctx.decodeAudioData(b); })
+      .then((buf) => { windBuf = buf; })
+      .catch(() => {});
+  }
+
+  function startWind() {
+    loadWind();
+    const ctx = getCtx();
+    if (!ctx) return;
+    const tryStart = () => {
+      if (windBuf && !windSrc && ctx.state === 'running') {
+        windSrc = ctx.createBufferSource();
+        windSrc.buffer = windBuf;
+        windSrc.loop = true;
+        const g = ctx.createGain();
+        g.gain.value = 0.08;
+        windSrc.connect(g); g.connect(master);
+        windSrc.start();
+      }
+    };
+    if (ctx.state === 'running') tryStart();
+    else ctx.addEventListener('statechange', tryStart);
+  }
+
   /* ---------------- horn ---------------- */
 
   let actx = null;
@@ -329,6 +362,7 @@
 
   let hornTimer = 0;
   let hornBuf = null;
+  let horn2Buf = null;
   let dkTimer = 0;
 
   function loadHorn() {
@@ -337,9 +371,15 @@
       .then((b) => { const ctx = getCtx(); if (ctx) return ctx.decodeAudioData(b); })
       .then((buf) => { hornBuf = buf; })
       .catch(() => {});
+    fetch('horn2.mp3')
+      .then((r) => { if (!r.ok) throw new Error(); return r.arrayBuffer(); })
+      .then((b) => { const ctx = getCtx(); if (ctx) return ctx.decodeAudioData(b); })
+      .then((buf) => { horn2Buf = buf; })
+      .catch(() => {});
   }
 
-  function honk() {
+  function honk(which) {
+    const isAir = which === 'air';
     const now = Date.now();
     if (now - hornTimer < 130) return;
     hornTimer = now;
@@ -352,69 +392,106 @@
     h.classList.add('honk');
     setTimeout(() => h.classList.remove('honk'), 900);
 
-    const btn = $('#horn');
-    btn.classList.remove('honking');
-    void btn.offsetWidth;
-    btn.classList.add('honking');
-    setTimeout(() => btn.classList.remove('honking'), 600);
+    const btn = isAir ? $('#horn-air') : $('#horn');
+    if (btn) {
+      btn.classList.remove('honking');
+      void btn.offsetWidth;
+      btn.classList.add('honking');
+      setTimeout(() => btn.classList.remove('honking'), 600);
+    }
 
     const ctx = getCtx();
     if (!ctx) return;
 
-    if (hornBuf) {
+    const buf = isAir ? horn2Buf : hornBuf;
+    if (buf) {
       const src = ctx.createBufferSource();
-      src.buffer = hornBuf;
+      src.buffer = buf;
       const g = ctx.createGain();
-      g.gain.value = 1;
+      g.gain.value = isAir ? 1.2 : 1;
       src.connect(g); g.connect(master);
       src.start();
     } else {
-      synthHorn(ctx);
+      synthHorn(ctx, isAir);
     }
 
     clearTimeout(dkTimer);
-    dkTimer = setTimeout(() => duck(false), 2800);
+    dkTimer = setTimeout(() => duck(false), isAir ? 2200 : 1800);
   }
 
-  function synthHorn(ctx) {
+  function synthHorn(ctx, isAir) {
     const t = ctx.currentTime;
     const g = ctx.createGain();
     g.gain.setValueAtTime(0, t);
     g.gain.linearRampToValueAtTime(0.5, t + 0.025);
-    g.gain.setValueAtTime(0.5, t + 0.55);
-    g.gain.linearRampToValueAtTime(0, t + 0.95);
+    if (isAir) {
+      g.gain.setValueAtTime(0.5, t + 1.6);
+      g.gain.linearRampToValueAtTime(0, t + 2.1);
+    } else {
+      g.gain.setValueAtTime(0.5, t + 0.55);
+      g.gain.linearRampToValueAtTime(0, t + 0.95);
+    }
 
-    const f = ctx.createBiquadFilter();
-    f.type = 'lowpass';
-    f.frequency.setValueAtTime(950, t);
-    f.frequency.linearRampToValueAtTime(620, t + 0.6);
+    if (isAir) {
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 260; bp.Q.value = 1.2;
 
-    const o1 = ctx.createOscillator();
-    o1.type = 'sawtooth';
-    o1.frequency.setValueAtTime(188, t);
-    o1.frequency.exponentialRampToValueAtTime(148, t + 0.65);
+      const o1 = ctx.createOscillator();
+      o1.type = 'square';
+      o1.frequency.setValueAtTime(248, t);
 
-    const o2 = ctx.createOscillator();
-    o2.type = 'sawtooth';
-    o2.frequency.setValueAtTime(283, t);
-    o2.frequency.exponentialRampToValueAtTime(224, t + 0.65);
+      const o2 = ctx.createOscillator();
+      o2.type = 'square';
+      o2.frequency.setValueAtTime(330, t);
 
-    const o3 = ctx.createOscillator();
-    o3.type = 'square';
-    o3.frequency.value = 94;
+      const o3 = ctx.createOscillator();
+      o3.type = 'sine';
+      o3.frequency.value = 124;
 
-    const vib = ctx.createOscillator();
-    vib.frequency.value = 7;
-    const vibGain = ctx.createGain();
-    vibGain.gain.value = 6;
-    vib.connect(vibGain);
-    vibGain.connect(o1.frequency);
+      const vib = ctx.createOscillator();
+      vib.frequency.value = 4;
+      const vibGain = ctx.createGain();
+      vibGain.gain.value = 8;
+      vib.connect(vibGain);
+      vibGain.connect(o1.frequency);
+      vibGain.connect(o2.frequency);
 
-    o1.connect(f); o2.connect(f); o3.connect(f);
-    f.connect(g); g.connect(master);
+      o1.connect(bp); o2.connect(bp); o3.connect(bp);
+      bp.connect(g); g.connect(master);
+      o1.start(t); o2.start(t); o3.start(t); vib.start(t);
+      o1.stop(t + 2.1); o2.stop(t + 2.1); o3.stop(t + 2.1); vib.stop(t + 2.1);
+    } else {
+      const f = ctx.createBiquadFilter();
+      f.type = 'lowpass';
+      f.frequency.setValueAtTime(950, t);
+      f.frequency.linearRampToValueAtTime(620, t + 0.6);
 
-    o1.start(t); o2.start(t); o3.start(t); vib.start(t);
-    o1.stop(t + 1); o2.stop(t + 1); o3.stop(t + 1); vib.stop(t + 1);
+      const o1 = ctx.createOscillator();
+      o1.type = 'sawtooth';
+      o1.frequency.setValueAtTime(188, t);
+      o1.frequency.exponentialRampToValueAtTime(148, t + 0.65);
+
+      const o2 = ctx.createOscillator();
+      o2.type = 'sawtooth';
+      o2.frequency.setValueAtTime(283, t);
+      o2.frequency.exponentialRampToValueAtTime(224, t + 0.65);
+
+      const o3 = ctx.createOscillator();
+      o3.type = 'square';
+      o3.frequency.value = 94;
+
+      const vib = ctx.createOscillator();
+      vib.frequency.value = 7;
+      const vibGain = ctx.createGain();
+      vibGain.gain.value = 6;
+      vib.connect(vibGain);
+      vibGain.connect(o1.frequency);
+
+      o1.connect(f); o2.connect(f); o3.connect(f);
+      f.connect(g); g.connect(master);
+      o1.start(t); o2.start(t); o3.start(t); vib.start(t);
+      o1.stop(t + 1); o2.stop(t + 1); o3.stop(t + 1); vib.stop(t + 1);
+    }
   }
 
   function duck(on) {
@@ -422,94 +499,6 @@
     if (on) state.player.setVolume(Math.max(1, Math.round(state.vol * 0.22)));
     else state.player.setVolume(state.muted ? 0 : state.vol);
   }
-
-  /* ---------------- temple bells ---------------- */
-
-  let bellBus = null;
-  let noiseBuf = null;
-  let bellVisual = 0;
-  let bellTimer = 0;
-
-  function ensureNoise() {
-    if (noiseBuf || !actx) return;
-    const len = Math.floor(actx.sampleRate * 0.3);
-    noiseBuf = actx.createBuffer(1, len, actx.sampleRate);
-    const d = noiseBuf.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-  }
-
-  function bellStrike(t, amp) {
-    const ctx = actx;
-    const partials = [[1, 1], [2.01, 0.62], [2.91, 0.45], [4.42, 0.24], [6.28, 0.11], [1.49, 0.36]];
-    const base = 640;
-    for (let i = 0; i < partials.length; i++) {
-      const o = ctx.createOscillator();
-      o.type = 'sine';
-      o.frequency.value = base * partials[i][0];
-      const g = ctx.createGain();
-      const d = 2.4;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(amp * partials[i][1], t + 0.005);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + d);
-      o.connect(g); g.connect(bellBus);
-      o.start(t); o.stop(t + d + 0.05);
-    }
-    ensureNoise();
-    if (noiseBuf) {
-      const n = ctx.createBufferSource();
-      n.buffer = noiseBuf;
-      const bp = ctx.createBiquadFilter();
-      bp.type = 'bandpass'; bp.frequency.value = 1900; bp.Q.value = 0.7;
-      const ng = ctx.createGain();
-      ng.gain.setValueAtTime(amp * 0.45, t);
-      ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
-      n.connect(bp); bp.connect(ng); ng.connect(bellBus);
-      n.start(t); n.stop(t + 0.15);
-    }
-  }
-
-  function duckBells(on) {
-    if (!state.ready) return;
-    if (on) state.player.setVolume(Math.max(1, Math.round(state.vol * 0.4)));
-    else state.player.setVolume(state.muted ? 0 : state.vol);
-  }
-
-  function ringBells() {
-    const ctx = getCtx();
-    if (!ctx || ctx.state !== 'running') return;
-    if (!bellBus) { bellBus = ctx.createGain(); bellBus.gain.value = 0.85; bellBus.connect(master); }
-    const t = ctx.currentTime;
-    duckBells(true);
-    bellStrike(t, 0.5);
-    bellStrike(t + 1.0, 0.42);
-    bellStrike(t + 2.0, 0.34);
-    const b = $('#bell');
-    if (b) {
-      clearTimeout(bellVisual);
-      b.classList.remove('ringing');
-      void b.offsetWidth;
-      b.classList.add('ringing');
-      bellVisual = setTimeout(() => b.classList.remove('ringing'), 3100);
-    }
-    setTimeout(() => duckBells(false), 3200);
-  }
-
-  function startBellSchedule() {
-    const interval = 5 * 60 * 1000;
-    const tick = () => {
-      bellTimer = setTimeout(() => { ringBells(); tick(); }, interval - (Date.now() % interval) + 40);
-    };
-    tick();
-  }
-
-  const gestureRing = () => {
-    document.removeEventListener('pointerdown', gestureRing);
-    document.removeEventListener('keydown', gestureRing);
-    const ctx = getCtx();
-    if (ctx && ctx.state === 'running') setTimeout(ringBells, 1200);
-  };
-  document.addEventListener('pointerdown', gestureRing);
-  document.addEventListener('keydown', gestureRing);
 
   /* ---------------- toast ---------------- */
 
@@ -780,7 +769,7 @@
           openTicket(); return;
         case 'h': case 'H':
           if (e.repeat) return;
-          honk(); toast('हर्न'); return;
+          honk('bus'); toast('हर्न'); return;
         case '?':
           toggleHints(); return;
         case 'Escape':
@@ -805,7 +794,16 @@
   /* ---------------- bindings ---------------- */
 
   function bindUI() {
-    $('#horn').addEventListener('click', honk);
+    $('#horn').addEventListener('click', () => honk('bus'));
+    $('#horn-air').addEventListener('click', () => honk('air'));
+
+    const gesturePlay = () => {
+      document.removeEventListener('pointerdown', gesturePlay);
+      document.removeEventListener('keydown', gesturePlay);
+      if (state.ready && !state.playing) state.player.playVideo();
+    };
+    document.addEventListener('pointerdown', gesturePlay);
+    document.addEventListener('keydown', gesturePlay);
 
     $('#toggle').addEventListener('click', () => {
       toggle();
