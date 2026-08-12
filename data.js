@@ -35,7 +35,15 @@ const TRACKS = [
   { id: "HC6bgMPacoc", title: "तिम्रो जस्तो मुटु", artist: "नारायण गोपाल" },
   { id: "SmOhcCnn4xo", title: "मखमली पछ्यौरीले", artist: "उदित नारायण झा · सञ्जीवनी" },
   { id: "2p5jJvX9JqY", title: "त्यो ओठमा", artist: "उदित नारायण झा" },
-  { id: "dkQClNMab6A", title: "धड्किन्छौ मुटुमा होला", artist: "नारायण गोपाल" }
+  { id: "dkQClNMab6A", title: "धड्किन्छौ मुटुमा होला", artist: "नारायण गोपाल" },
+  { id: "GH9BQslHCQo", title: "नमना लाज यस्तरी", artist: "प्रेम ध्वज प्रधान · उषा मंगेशकर" },
+  { id: "JzN-Qryd1VU", title: "देउरालीमा बतास चल्यो", artist: "प्रेम ध्वज प्रधान" },
+  { id: "ZJNHwD3M93c", title: "तिमी लाई शुभकामना", artist: "लता मंगेशकर" },
+  { id: "lqIZB0IZceE", title: "जिन्दगी लाई जित हैन", artist: "मन्ना डे" },
+  { id: "Q7vcpeUy6l0", title: "काला कुर्ताइले", artist: "अरुणा लामा · सि.पि. लोहनी" },
+  { id: "NPIoknqCwX8", title: "छ सलाम कसरी बोलाम", artist: "सि.पि. लोहनी" },
+  { id: "MkJVdsDhzTQ", title: "तारा मात्रै होइन", artist: "प्रेम ध्वज प्रधान" },
+  { id: "h18JKzzdg8o", title: "गोरेटो त्यो गाउँको", artist: "प्रेम ध्वज प्रधान" }
 ];
 
 const ROUTE = { name: "पृथ्वी राजमार्ग", from: "पोखरा", to: "काठमाडौं" };
