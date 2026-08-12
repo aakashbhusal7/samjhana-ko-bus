@@ -40,6 +40,7 @@
     bindUI();
     loadYouTube();
     startBellSchedule();
+    loadHorn();
   }
 
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -327,6 +328,17 @@
   }
 
   let hornTimer = 0;
+  let hornBuf = null;
+  let dkTimer = 0;
+
+  function loadHorn() {
+    fetch('horn.mp3')
+      .then((r) => { if (!r.ok) throw new Error(); return r.arrayBuffer(); })
+      .then((b) => { const ctx = getCtx(); if (ctx) return ctx.decodeAudioData(b); })
+      .then((buf) => { hornBuf = buf; })
+      .catch(() => {});
+  }
+
   function honk() {
     const now = Date.now();
     if (now - hornTimer < 130) return;
@@ -349,6 +361,22 @@
     const ctx = getCtx();
     if (!ctx) return;
 
+    if (hornBuf) {
+      const src = ctx.createBufferSource();
+      src.buffer = hornBuf;
+      const g = ctx.createGain();
+      g.gain.value = 1;
+      src.connect(g); g.connect(master);
+      src.start();
+    } else {
+      synthHorn(ctx);
+    }
+
+    clearTimeout(dkTimer);
+    dkTimer = setTimeout(() => duck(false), 2800);
+  }
+
+  function synthHorn(ctx) {
     const t = ctx.currentTime;
     const g = ctx.createGain();
     g.gain.setValueAtTime(0, t);
@@ -387,10 +415,6 @@
 
     o1.start(t); o2.start(t); o3.start(t); vib.start(t);
     o1.stop(t + 1); o2.stop(t + 1); o3.stop(t + 1); vib.stop(t + 1);
-
-    let dkTimer = 0;
-    clearTimeout(dkTimer);
-    dkTimer = setTimeout(() => duck(false), 1100);
   }
 
   function duck(on) {
