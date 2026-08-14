@@ -43,7 +43,12 @@ const TRACKS = [
   { id: "Q7vcpeUy6l0", title: "काला कुर्ताइले", artist: "अरुणा लामा · सि.पि. लोहनी" },
   { id: "NPIoknqCwX8", title: "छ सलाम कसरी बोलाम", artist: "सि.पि. लोहनी" },
   { id: "MkJVdsDhzTQ", title: "तारा मात्रै होइन", artist: "प्रेम ध्वज प्रधान" },
-  { id: "h18JKzzdg8o", title: "गोरेटो त्यो गाउँको", artist: "प्रेम ध्वज प्रधान" }
+  { id: "h18JKzzdg8o", title: "गोरेटो त्यो गाउँको", artist: "प्रेम ध्वज प्रधान" },
+  { id: "d0zW26053i0", title: "मेरो मनैको फुल टिपी", artist: "उदित नारायण झा · दीपा झा" },
+  { id: "5GwJXq3Jva4", title: "केही मिठो बात गर", artist: "नारायण गोपाल" },
+  { id: "r8B5aAusW-c", title: "जति चोट दिन्छौ", artist: "भक्तराज आचार्य" },
+  { id: "CamxggWyIyY", title: "हजार आँखा हेर्ने", artist: "भक्तराज आचार्य" },
+  { id: "8brC9ed-g9w", title: "एउटा मान्छेको मायाले कति", artist: "नारायण गोपाल" }
 ];
 
 const ROUTE = { name: "पृथ्वी राजमार्ग", from: "पोखरा", to: "काठमाडौं" };
