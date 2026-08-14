@@ -48,7 +48,9 @@ const TRACKS = [
   { id: "5GwJXq3Jva4", title: "केही मिठो बात गर", artist: "नारायण गोपाल" },
   { id: "r8B5aAusW-c", title: "जति चोट दिन्छौ", artist: "भक्तराज आचार्य" },
   { id: "CamxggWyIyY", title: "हजार आँखा हेर्ने", artist: "भक्तराज आचार्य" },
-  { id: "8brC9ed-g9w", title: "एउटा मान्छेको मायाले कति", artist: "नारायण गोपाल" }
+  { id: "8brC9ed-g9w", title: "एउटा मान्छेको मायाले कति", artist: "नारायण गोपाल" },
+  { id: "ShRu30ulceA", title: "सुना भनना", artist: "उदित नारायण झा" },
+  { id: "nOWzEMhfY0E", title: "तिमी हामी यस्तरी", artist: "प्रेमराज महत · कोमल ओली" }
 ];
 
 const ROUTE = { name: "पृथ्वी राजमार्ग", from: "पोखरा", to: "काठमाडौं" };
