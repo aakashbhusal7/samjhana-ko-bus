@@ -50,7 +50,11 @@ const TRACKS = [
   { id: "CamxggWyIyY", title: "हजार आँखा हेर्ने", artist: "भक्तराज आचार्य" },
   { id: "8brC9ed-g9w", title: "एउटा मान्छेको मायाले कति", artist: "नारायण गोपाल" },
   { id: "ShRu30ulceA", title: "सुना भनना", artist: "उदित नारायण झा" },
-  { id: "nOWzEMhfY0E", title: "तिमी हामी यस्तरी", artist: "प्रेमराज महत · कोमल ओली" }
+  { id: "nOWzEMhfY0E", title: "तिमी हामी यस्तरी", artist: "प्रेमराज महत · कोमल ओली" },
+  { id: "YKvONdP4Fr4", title: "कुसुमे रुमाल", artist: "उदित नारायण झा · दीपा झा" },
+  { id: "I1Qpv2Brako", title: "तिमी नभए", artist: "उदित नारायण झा" },
+  { id: "d4mZtzOhHtU", title: "के भो लाउन नि", artist: "उदित नारायण झा · दीपा झा" },
+  { id: "p6baD_CD9DE", title: "माया को बारीमा", artist: "उदित नारायण झा · दीपा झा" }
 ];
 
 const ROUTE = { name: "पृथ्वी राजमार्ग", from: "पोखरा", to: "काठमाडौं" };
